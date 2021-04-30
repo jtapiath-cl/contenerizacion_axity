@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+    mydb:
+        image: postgres
+        volumes:
+            - db-data:/var/lib/postgresql/data
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_PASSWORD=mysecretpassword
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=base_prueba
+        networks:
+            mynetwork:
+                ipv4_address: 157.162.0.5
+    
+    pgadmin:
+        image: crunchydata/crunchy-pgadmin4:centos7-10.9-2.4.1
+        volumes:
+            - pga4volume:/var/lib/pgadmin
+        environment:
+            - PGADMIN_SETUP_EMAIL=youremail@yourdomain.com
+            - PGADMIN_SETUP_PASSWORD=yoursecurepassword
+        ports:
+            - 5050:5050
+        networks:
+            mynetwork:
+                ipv4_address:
+                    157.162.0.25
+
+volumes:
+    db-data:
+        driver: local
+    pga4volume:
+
+networks:
+    mynetwork:
+        ipam:
+            driver: default
+            config:
+                - subnet: "157.162.0.0/24"
